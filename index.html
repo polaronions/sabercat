@@ -1,0 +1,13 @@
+<script>
+  function setBackgroundColor(e) {
+    document.body.style.backgroundColor = "red"
+
+    log = document.getElementById("log").innerHTML
+
+    document.getElementById("log").innerHTML = "hi <br />" + log
+  }
+</script>
+
+<input type="text" value="sabercat" oninput="setBackgroundColor(event)">
+
+<div id="log"></div>
