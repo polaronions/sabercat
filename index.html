@@ -1,13 +1,72 @@
+<!--
+ideas:
+* maybe make it so the text better constrasts with the background
+-->
+
 <script>
-  function setBackgroundColor(e) {
-    document.body.style.backgroundColor = "red"
-
-    log = document.getElementById("log").innerHTML
-
-    document.getElementById("log").innerHTML = "hi <br />" + log
+  /* This script taken from https://stackoverflow.com/a/8831937 */
+  String.prototype.hashCode = function() {
+    var hash = 0;
+    if (this.length == 0) {
+      return hash;
+    }
+    for (var i = 0; i < this.length; i++) {
+      var char = this.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
   }
 </script>
 
+<script>
+  function pageLog(thing) {
+    document.getElementById("pageLog").innerHTML = thing + "<br />" + document.getElementById("pageLog").innerHTML
+  }
+
+  function setBackgroundColor(event) {
+    inputString = event.target.value
+
+    rStr = inputString
+    gStr = inputString + inputString
+    bStr = inputString + gStr
+
+    function colorMod(str) {
+      return Math.abs(str.hashCode()) % 256
+    }
+
+    r = colorMod(rStr)
+    g = colorMod(gStr)
+    b = colorMod(bStr)
+
+    pageLog("")
+    pageLog(`rgb = (${r},${g},${b})`)
+    pageLog(inputString.hashCode())
+    pageLog(Math.abs(inputString.hashCode()) % 256)
+    pageLog(inputString)
+
+    document.body.style.backgroundColor = `rgb(${r},${g},${b})`
+  }
+
+
+  // event = {}
+  // event.target = {}
+  // event.target.value = "sabercat"
+  //
+  // setBackgroundColor(event)
+
+
+  // document.onload = function() {
+  //   document.body.style.backgroundColor = "blue"
+  // }
+</script>
+
+<style>
+  body {
+    background: rgb(181, 106, 225)
+  }
+</style>
+
 <input type="text" value="sabercat" oninput="setBackgroundColor(event)">
 
-<div id="log"></div>
+<div id="pageLog"></div>
