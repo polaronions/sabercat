@@ -1,72 +1,79 @@
+<html>
 <!--
 ideas:
 * maybe make it so the text better constrasts with the background
 -->
 
-<script>
-  /* This script taken from https://stackoverflow.com/a/8831937 */
-  String.prototype.hashCode = function() {
-    var hash = 0;
-    if (this.length == 0) {
+<head>
+  <script>
+    /* This script taken from https://stackoverflow.com/a/8831937 */
+    String.prototype.hashCode = function() {
+      var hash = 0;
+      if (this.length == 0) {
+        return hash;
+      }
+      for (var i = 0; i < this.length; i++) {
+        var char = this.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+      }
       return hash;
     }
-    for (var i = 0; i < this.length; i++) {
-      var char = this.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convert to 32bit integer
-    }
-    return hash;
-  }
-</script>
+  </script>
 
-<script>
-  function pageLog(thing) {
-    document.getElementById("pageLog").innerHTML = thing + "<br />" + document.getElementById("pageLog").innerHTML
-  }
-
-  function setBackgroundColor(event) {
-    inputString = event.target.value
-
-    rStr = inputString
-    gStr = inputString + inputString
-    bStr = inputString + gStr
-
-    function colorMod(str) {
-      return Math.abs(str.hashCode()) % 256
+  <script>
+    function pageLog(thing) {
+      document.getElementById("pageLog").innerHTML = thing + "<br />" + document.getElementById("pageLog").innerHTML
     }
 
-    r = colorMod(rStr)
-    g = colorMod(gStr)
-    b = colorMod(bStr)
+    function configurePage(inputString) {
+      globalStr = "empty" + inputString
 
-    pageLog("")
-    pageLog(`rgb = (${r},${g},${b})`)
-    pageLog(inputString.hashCode())
-    pageLog(Math.abs(inputString.hashCode()) % 256)
-    pageLog(inputString)
+      drr = function(lower, upper) {
+        globalStr += "a" + inputString
+        modNum = upper - lower + 1
+        retVal = (Math.abs(globalStr.hashCode()) % modNum) + lower
+        return retVal
+      }
 
-    document.body.style.backgroundColor = `rgb(${r},${g},${b})`
-  }
+      document.body.style.backgroundColor = `rgb(${drr(0, 255)},${drr(0, 255)},${drr(0, 255)})`
 
+      square = document.getElementById("square")
+      square.setAttribute("x", drr(50, 100))
+      square.setAttribute("y", drr(50, 100))
+      square.setAttribute("width", drr(20, 70))
+      square.setAttribute("height", square.getAttribute("width"))
 
-  // event = {}
-  // event.target = {}
-  // event.target.value = "sabercat"
-  //
-  // setBackgroundColor(event)
+      square = document.getElementById("circle")
+      circle.setAttribute("cx", drr(300, 400))
+      circle.setAttribute("cy", drr(70, 200))
+      circle.setAttribute("r", drr(26, 51))
 
+      poly = document.getElementById("poly")
 
-  // document.onload = function() {
-  //   document.body.style.backgroundColor = "blue"
-  // }
-</script>
+      x = drr(20, 100)
+      y = drr(230, 280)
+      side = drr(10, 30)
+      poly.setAttribute("points", `${x} ${y}, ${x} ${y+side}, ${x+side} ${y+side}`)
 
-<style>
-  body {
-    background: rgb(181, 106, 225)
-  }
-</style>
+      lower = 0
+      upper = 10
+      pageLog(`[${lower}, ${upper}] = ${drr(lower,upper)}`)
 
-<input type="text" value="sabercat" oninput="setBackgroundColor(event)">
+    }
+  </script>
+</head>
 
-<div id="pageLog"></div>
+<body onload="configurePage(document.getElementById('textInput').getAttribute('value'))">
+  <input id="textInput" type="text" value="sabercat" oninput="configurePage(event.target.value)">
+  <br />
+  <svg width="100%" height="40%">
+    <rect id="square" x="585" y="100" width="30" height="30" fill="black" />
+    <circle id="circle" cx="25" cy="75" r="20" fill="black" />
+    <polygon id="poly" points="10 10, 10 30, 30 30" fill="black" />
+  </svg>
+
+  <div id="pageLog"></div>
+</body>
+
+</html>
